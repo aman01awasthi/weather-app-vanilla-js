@@ -19,9 +19,9 @@ loadLastCity();
 async function loadLastCity(){
     let savedCity = loadData();
     document.getElementById('city').value = savedCity;
-    let savedCityData = await getWeather(savedCity);
-
+    
     if(savedCity){
+        let savedCityData = await getWeather(savedCity);
         renderData(savedCityData);
     }else{
         return '';
@@ -41,31 +41,31 @@ async function getWeather(city) {
             message = "City Not Found";
             return message;
         }
-
         return response;
     }catch(err){
-        //here we show or catch erro
-        return err.message;
-    } 
+        return "Network error — please check your connection";
+    }
 }
 
 document.getElementById('weatherForm').addEventListener('submit', async (e)=>{
     e.preventDefault();
     let cityVal = document.getElementById('city').value.trim();
-    // console.log(cityVal);
     let dataErr = document.getElementById('displayError');
     if(cityVal === ""){
         message = "Empty Input";
         return dataErr.textContent = message;
     }
+    showLoader();
     let data = await getWeather(cityVal);
-    // console.log(typeof data);
     if(typeof data === 'object'){
         renderData(data);
+        hideLoader();
         dataErr.textContent = '';
-        console.log(saveData(cityVal));
+        saveData(cityVal);
     } else{
         dataErr.textContent = data;
+        hideLoader();
+
     }
 })
 
@@ -75,7 +75,7 @@ function renderData(response){
     displayData.textContent = '';
 
     let li = document.createElement('li');
-    li.textContent = `${response.name} - ${response.main.temp} - ${response.weather[0].description} - ${response.main.humidity} - ${response.wind.speed}`;
+    li.textContent = `${response.name} | ${response.main.temp}°C | ${response.weather[0].description} | Humidity: ${response.main.humidity}% | Wind: ${response.wind.speed} m/s`;
 
     displayData.appendChild(li);
 }
@@ -92,4 +92,14 @@ function loadData(){
     }else{
         return '';
     }
+}
+
+function showLoader(){
+    let loader = document.getElementById('loader-container');
+    loader.style.display = 'block';
+}
+
+function hideLoader(){
+    let loader = document.getElementById('loader-container');
+    loader.style.display = 'none';
 }
