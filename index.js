@@ -64,6 +64,8 @@ document.getElementById('weatherForm').addEventListener('submit', async (e)=>{
         saveData(cityVal);
     } else{
         dataErr.textContent = data;
+        let displayData = document.getElementById('weather-container');
+        displayData.textContent = '';
         hideLoader();
 
     }
